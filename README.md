@@ -18,6 +18,12 @@ Clone this repository:
 git clone https://github.com/yourusername/MixYoloNet.git
 cd MixYoloNet
 ```
+
+## Dataset
+- **VOC-FOG**: Download this model at https://drive.google.com/file/d/1bLUtwrKwzPwLI3yZBFZYw4BnINpxCfVp/view?usp=sharing (from https://github.com/yz-wang/TogetherNet) .
+- **RTTS**: Download this model at https://sites.google.com/view/reside-dehaze-datasets/reside-%CE%B2.
+- **Foggy Driving**: Download this model at https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/. 
+
 ## Usage
 
 ### Training
