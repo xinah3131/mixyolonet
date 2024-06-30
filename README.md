@@ -1,6 +1,3 @@
-Sure, here is the complete `README.md` for your project:
-
-```markdown
 # MixYoloNet: Deep Image Restoration for Improving Object Detection
 
 ## Overview
