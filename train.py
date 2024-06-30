@@ -791,6 +791,7 @@ def main():
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--test', action='store_true')
     parser.add_argument('--inference', action='store_true')
+    parser.add_argument('--inference_input',type=str)
     parser.add_argument('--inference_test', action='store_true')
     parser.add_argument('--data', default='rtts',type=str)
     parser.add_argument('--detection_weight', default=0.6, type=int)
@@ -830,10 +831,11 @@ def main():
         if args.data == "voc":
             test(args, params)
     if args.inference:
-        inference('./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt','./test/VOCtest-FOG/2012_004312.jpg',args,params, device)
-
+        inference(args.model_path,args.inference_input,args,params, device)
+    #'./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt'
+    #'./test/VOCtest-FOG/2012_004312.jpg'
     if args.inference_test:
-        inference_test_set('./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt', args, params, test_set=args.data, device=device)
+        inference_test_set(args.model_path, args, params, test_set=args.data, device=device)
 
 if __name__ == "__main__":
     main()

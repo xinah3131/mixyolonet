@@ -37,7 +37,7 @@ python train.py
 
 To test the model, run:
 ```bash
-python train.py --test
+python train.py --test --data your_dataset
 ```
 
 ### Inference
@@ -49,24 +49,24 @@ python train.py --inference --image_path path_to_your_image
 
 To perform inference on an entire folder of images, run:
 ```bash
-python train.py --inference_test --folder_path path_to_your_folder
+python train.py --inference_test --model_path your_model --inference_input your_input_image
 ```
 
 ### Data Conversion
 
 Convert VOCFOG dataset:
 ```bash
-python voctoyolo.py --dataset_path path_to_vocfog_dataset
+python voctoyolo.py 
 ```
 
 Convert Foggy Driving dataset:
 ```bash
-python foggytovoc.py --dataset_path path_to_foggy_driving_dataset
+python foggytovoc.py 
 ```
 
 Convert RTTS dataset:
 ```bash
-python rttstovoc.py --dataset_path path_to_rtts_dataset
+python rttstovoc.py 
 ```
 
 ## Configuration
@@ -86,5 +86,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Feel free to submit issues and pull requests for improvements or bug fixes.
 ```
-
-You can copy and paste this `README.md` into your GitHub repository. Make sure to adjust any specific paths, commands, or configurations as needed for your project.
