@@ -24,6 +24,12 @@ cd MixYoloNet
 - **RTTS**: Download this model at https://sites.google.com/view/reside-dehaze-datasets/reside-%CE%B2.
 - **Foggy Driving**: Download this model at https://people.ee.ethz.ch/~csakarid/SFSU_synthetic/. 
 
+## Pretrained Model
+| Model Name             | Download Link                                  |
+|------------------------|-------------------------------------------------|
+| MixYoloNet | [Link](https://example.com/model_download)      |
+
+
 ## Usage
 
 ### Training
@@ -79,8 +85,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgements
 
-- YOLOv8 by Ultralytics
-- Mix Structure Net for providing the mix structure block
+- YOLOv8 by jahongir7174 (https://github.com/jahongir7174/YOLOv8-pt)
+- Mix DehazeNet for providing the mix structure block by AmeryXiong (https://github.com/AmeryXiong/MixDehazeNet/tree/main)
 
 ## Contributing
 
