@@ -1,8 +1,8 @@
-# MixYoloNet: Deep Image Restoration for Improving Object Detection
+# Mix-YOLONet: Deep Image Restoration for Improving Object Detection
 
 ## Overview
 
-Mix-YOLONet is a multi-task joint network designed for both object detection and image restoration. It leverages the YOLOv8 architecture and incorporates attention mechanisms in the encoder and decoder using a Mix Structure Block from MixDehazeNet.
+Mix-YOLONet is a multi-task joint network designed for both object detection and image restoration. It leverages the YOLOv8 architecture and incorporates attention mechanisms in the encoder and decoder using a Mix Structure Block from MixDehazeNet(https://github.com/AmeryXiong/MixDehazeNet/tree/main).
 
 ## Features
 
@@ -27,7 +27,7 @@ cd MixYoloNet
 ## Pretrained Model
 | Model Name             | Download Link                                  |
 |------------------------|-------------------------------------------------|
-| MixYoloNet | [Link](https://example.com/model_download)      |
+| Mix-YOLONet | [Link](https://example.com/model_download)      |
 
 
 ## Usage
