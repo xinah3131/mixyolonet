@@ -51,8 +51,8 @@ def load_args_params():
     return args, params
 
 def home_page():
-    st.title("Mix-YoloNet: Dehazing and Object Detection")
-    st.write("Welcome to the Mix-YoloNet demo application!")
+    st.title("Mix-YOLONet: Dehazing and Object Detection")
+    st.write("Welcome to the Mix-YOLONet demo application!")
     
     st.markdown("""
     ### Key Features:
@@ -63,7 +63,7 @@ def home_page():
     Use the tabs above to explore different sections of the app.
     """)
 
-    st.image("deployment/model/Ynet with attention on decoder crop.png", caption="Sample output from Mix-YoloNet", use_column_width=True)
+    st.image("deployment/model/Ynet with attention on decoder crop.png", caption="Sample output from Mix-YOLONet", use_column_width=True)
 
 
 def model_architecture_page():
@@ -131,21 +131,21 @@ def show_table_result(dataset):
     
     if dataset == "FOGGY DRIVING":
         results_data = {
-            'Model': ['Yolo V8', 'Yolo V8 (with Clean Images)','IA-YOLO', 'Togethernet', 'RetinaYNet (Ours)', 'Mix-YOLONet (Ours)'],
-            'Type': ['Baseline','Baseline', 'Image Adaptive', 'Multi-task', 'Multi-task', 'Multi-task'],
-            'mAP': [46.1, 39.4, 18.34, 34.93, 13.46, 47.2]
+            'Model': ['Yolo V8', 'Yolo V8 (with Clean Images)','IA-YOLO', 'DS-Net','TogetherNet', 'Mix-YOLONet (Ours)'],
+            'Type': ['Baseline','Baseline', 'Image Adaptive', 'Multi-task', 'Multi-task','Multi-task'],
+            'mAP': [44.27, 39.12, 18.34, 29.47, 34.93, 45.70]
         }
     elif dataset == "RTTS":
         results_data = {
-            'Model': ['Yolo V8', 'Yolo V8 (with Clean Images)', 'IA-YOLO', 'Togethernet', 'RetinaYNet (Ours)', 'Mix-YOLONet (Ours)'],
+            'Model': ['Yolo V8', 'Yolo V8 (with Clean Images)', 'IA-YOLO', 'DS-Net','TogetherNet',  'Mix-YOLONet (Ours)'],
             'Type': ['Baseline','Baseline', 'Image Adaptive', 'Multi-task', 'Multi-task', 'Multi-task'],
-            'mAP': [65.6, 65.7, 35.66, 61.55, 21.12, 67.2]
+            'mAP': [66.14, 64.90, 35.66, 32.71,61.55, 67.27]
         }
     else:
         results_data = {
-            'Model': ['Yolo V8','Yolo V8 (with Clean Images)', 'IA-YOLO', 'Togethernet', 'RetinaYNet (Ours)', 'Mix-YOLONet (Ours)'],
+            'Model': ['Yolo V8','Yolo V8 (with Clean Images)', 'IA-YOLO', 'DS-Net','TogetherNet',  'Mix-YOLONet (Ours)'],
             'Type': ['Baseline', 'Baseline','Image Adaptive', 'Multi-task', 'Multi-task', 'Multi-task'],
-            'mAP': [80.2, 68.1,64.77, 79.1, 61.2, 80.3]
+            'mAP': [79.79, 67.19,64.77, 65.89 ,79.10, 80.59]
         }
     df = pd.DataFrame(results_data)
 

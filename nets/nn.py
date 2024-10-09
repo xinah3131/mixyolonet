@@ -118,7 +118,7 @@ class MixStructureBlock(torch.nn.Module):
     def forward(self, x):
         if self.dim < 512:
             identity = x
-            x = self.norm1(x)
+            #x = self.norm1(x)
             x = self.conv1(x)
             x = self.conv2(x)
             x = torch.cat([self.conv3_19(x), self.conv3_13(x), self.conv3_7(x)], dim=1)
@@ -126,7 +126,7 @@ class MixStructureBlock(torch.nn.Module):
             x = identity + x
       
         identity = x
-        x = self.norm2(x)
+        #x = self.norm2(x)
         x = torch.cat([self.Wv(x) * self.Wg(x), self.ca(x) * x, self.pa(x) * x], dim=1)
         x = self.mlp2(x)
         x = identity + x
@@ -206,7 +206,7 @@ class DarkNet(torch.nn.Module):
     def __init__(self, width, depth):
         super().__init__()
         p1 = [Conv(width[0], width[1], 3, 2),]
-              #MixStructureLayer(width[1],1)]
+              #MixStructureLayer(width[1],1)
         p2 = [Conv(width[1], width[2], 3, 2),
               CSP(width[2], width[2], depth[0]),
               MixStructureLayer(width[2],1)]
@@ -266,7 +266,9 @@ class DarkFPN(torch.nn.Module):
         h1 = self.h1(torch.cat([self.up(p5), p4], 1))
         h2 = self.h2(torch.cat([self.up(h1), p3], 1))
         h4 = self.h4(torch.cat([self.h3(h2), h1], 1))
+        #h6 = self.m6(self.h6(torch.cat([self.h5(h4), p5], 1)))
         h6 = self.h6(torch.cat([self.h5(h4), p5], 1))
+
         return h2, h4, h6
 
 

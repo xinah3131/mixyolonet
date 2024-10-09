@@ -2,7 +2,7 @@
 
 ## Overview
 
-MixYoloNet is a multi-task joint network designed for both object detection and image restoration. It leverages the YOLOv8 architecture and incorporates attention mechanisms in the encoder and decoder using a Mix Structure Block from Mix Structure Net.
+Mix-YOLONet is a multi-task joint network designed for both object detection and image restoration. It leverages the YOLOv8 architecture and incorporates attention mechanisms in the encoder and decoder using a Mix Structure Block from MixDehazeNet.
 
 ## Features
 

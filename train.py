@@ -54,6 +54,20 @@ def train(args, params):
     accumulate = max(round(64 / (args.batch_size * args.world_size)), 1)
     params['weight_decay'] *= args.batch_size * args.world_size * accumulate / 64
 
+    # p = [], [], []
+    # for v in model.modules():
+    #     if hasattr(v, 'bias') and isinstance(v.bias, torch.nn.Parameter):
+    #         p[2].append(v.bias)
+    #     if isinstance(v, torch.nn.BatchNorm2d):
+    #         p[1].append(v.weight)
+    #     elif hasattr(v, 'weight') and isinstance(v.weight, torch.nn.Parameter):
+    #         p[0].append(v.weight)
+
+    # optimizer = torch.optim.SGD(p[2], params['lr0'], params['momentum'], nesterov=True)
+
+    # optimizer.add_param_group({'params': p[0], 'weight_decay': params['weight_decay']})
+    # optimizer.add_param_group({'params': p[1]})
+    # del p
     p = [], [], []
     for name, module in model.named_modules():    
             if 'decoder' not in name:
@@ -83,6 +97,7 @@ def train(args, params):
     optimizer.add_param_group({'params': d[1], 'lr': params['lr1']})
 
     del p, d
+
 
     # Scheduler
     #lr = learning_rate(args, params)
@@ -291,19 +306,19 @@ def train(args, params):
                 map_rtts = test_detect(args, params,'test_rtts.txt' ,ema.ema, current_epoch, rtts_loader)
                 map_foggy = test_detect(args, params,'test_foggy.txt' ,ema.ema, current_epoch, foggy_loader)
 
-                writer.writerow({'mAP': str(f'{last[1]:.3f}'),
+                writer.writerow({'mAP': str(f'{last[1]:.4f}'),
                                  'epoch': str(start_epoch).zfill(3),
-                                 'mAP@50': str(f'{last[0]:.3f}'),
-                                 'mAP_RTTS': str(f'{map_rtts:.3f}'),
-                                 'mAP_Foggy': str(f'{map_foggy:.3f}'),
+                                 'mAP@50': str(f'{last[0]:.4f}'),
+                                 'mAP_RTTS': str(f'{map_rtts:.4f}'),
+                                 'mAP_Foggy': str(f'{map_foggy:.4f}'),
                                  'loss': str(f'{m_loss.avg:.3f}'),
                                  'detection_loss': str(f'{m_detect_loss.avg:.3f}'),
                                  'dehazing_loss': str(f'{m_dehaze_loss.avg:.3f}'),
                                  'valid_loss' :str(f'{last[6]:.3f}'),
                                  'valid_detection_loss': str(f'{last[4]:.3f}'),
                                  'valid_dehazing_loss': str(f'{last[5]:.3f}'),
-                                 'PSNR': str(f'{last[2]:.3f}'),
-                                 'SSIM': str(f'{last[3]:.3f}')})
+                                 'PSNR': str(f'{last[2]:.4f}'),
+                                 'SSIM': str(f'{last[3]:.4f}')})
                 f.flush()
 
                 # Update best mAP
@@ -351,15 +366,13 @@ def test(args, params, model=None, current_epoch=0, loader=None):
         dataset = Dataset(filenames, gt_filenames, args.input_size, params, False)
         loader = data.DataLoader(dataset, 8, False, num_workers=8, pin_memory=True, collate_fn=Dataset.collate_fn)
     if model is None:
-        model = torch.load('./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt', map_location='cuda')['model'].float()
+        model = torch.load('./weights/best_640_0.0001_0.01_0.8_0.2_3dec_aug_msb(83).pt', map_location='cuda')['model'].float()
     m_loss = util.AverageMeter()
     m_detect_loss = util.AverageMeter()
     m_dehaze_loss = util.AverageMeter()
     criterion = util.ComputeLoss(model, params)
     dehaze_criterion = torch.nn.MSELoss()
     
-
-
     model.half()
     model.eval()
 
@@ -466,12 +479,6 @@ def test(args, params, model=None, current_epoch=0, loader=None):
 
     # Compute metrics
     metrics = [torch.cat(x, 0).cpu().numpy() for x in zip(*metrics)]  # to numpy
-    if len(metrics) and metrics[0].any():
-        tp, fp, m_pre, m_rec, map50, mean_ap, ap_class = util.compute_ap(*metrics)
-
-    # Print results
-    print('%10.3g' * 6 % (map50, total_psnr / count, total_ssim / count, m_detect_loss.avg, m_dehaze_loss.avg, m_loss.avg))
-    # Plot AP for each class
     # Define class names
     class_names = {
         0: 'person',
@@ -480,6 +487,33 @@ def test(args, params, model=None, current_epoch=0, loader=None):
         3: 'motorbike',
         4: 'bus'
     }
+
+    if len(metrics) and metrics[0].any():
+        tp, fp, m_pre, m_rec, map50, mean_ap, ap_class = util.compute_ap(*metrics)
+        # class_labels = [class_names[c] for c in ap_class.keys()]
+        # ap_values = list(ap_class.values())
+
+        # # Plotting
+        # plt.figure(figsize=(10, 5))
+        # bars = plt.bar(class_labels, ap_values)
+        # plt.xlabel('Classes')
+        # plt.ylabel('Average Precision (AP)')
+        # plt.title('Average Precision (AP) for each class')
+        # plt.xticks(rotation=45)
+        # plt.tight_layout()
+
+        # # Adding labels
+        # for bar in bars:
+        #     height = bar.get_height()
+        #     plt.text(bar.get_x() + bar.get_width() / 2.0, height, f'{height:.4f}', ha='center', va='bottom')
+
+        # # Save the plot
+        # plot_path = f'ap_per_class.png'
+        # plt.savefig(plot_path)
+        # plt.show()
+    # Print results
+    print('%10.3g' * 6 % (map50, total_psnr / count, total_ssim / count, m_detect_loss.avg, m_dehaze_loss.avg, m_loss.avg))
+    # Plot AP for each class
 
     model.float()  # for training
     return map50, mean_ap, total_psnr / count, total_ssim / count, m_detect_loss.avg, m_dehaze_loss.avg, m_loss.avg
@@ -500,7 +534,7 @@ def test_detect(args, params,input_file='test_rtts.txt', model=None, current_epo
                                 pin_memory=True, collate_fn=Dataset_Map.collate_fn)
 
     if model is None:
-        model = torch.load('./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(72).pt', map_location='cuda')['model'].float()
+        model = torch.load('./weights/best_640_0.0001_0.01_0.6_0.4_3dec_aug_msb(81).pt', map_location='cuda')['model'].float()
     model.half()
     model.eval()
 
@@ -578,9 +612,36 @@ def test_detect(args, params,input_file='test_rtts.txt', model=None, current_epo
 
     # Compute metrics
     metrics = [torch.cat(x, 0).cpu().numpy() for x in zip(*metrics)]  # to numpy
+    class_names = {
+        0: 'person',
+        1: 'bicycle',
+        2: 'car',
+        3: 'motorbike',
+        4: 'bus'
+    }
     if len(metrics) and metrics[0].any():
         tp, fp, m_pre, m_rec, map50, mean_ap,ap_class = util.compute_ap(*metrics)
+        # class_labels = [class_names[c] for c in ap_class.keys()]
+        # ap_values = list(ap_class.values())
 
+        # # Plotting
+        # plt.figure(figsize=(10, 5))
+        # bars = plt.bar(class_labels, ap_values)
+        # plt.xlabel('Classes')
+        # plt.ylabel('Average Precision (AP)')
+        # plt.title('Average Precision (AP) for each class')
+        # plt.xticks(rotation=45)
+        # plt.tight_layout()
+
+        # # Adding labels
+        # for bar in bars:
+        #     height = bar.get_height()
+        #     plt.text(bar.get_x() + bar.get_width() / 2.0, height, f'{height:.4f}', ha='center', va='bottom')
+
+        # # Save the plot
+        # plot_path = f'ap_per_class.png'
+        # plt.savefig(plot_path)
+        # plt.show()
     # Print results
     print('%10.3g' * 1 % (map50))
    
@@ -721,7 +782,7 @@ def inference_test_set(model_path, args, params, test_set='test', device="cpu"):
     os.makedirs(output_dir, exist_ok=True)
 
     filenames = []
-    with open(f'{test_set}.txt') as reader:
+    with open(f'test_{test_set}.txt') as reader:
         for filename in reader.readlines():
             filename = filename.rstrip().split('/')[-1]
             filenames.append(filename)
@@ -735,11 +796,7 @@ def inference_test_set(model_path, args, params, test_set='test', device="cpu"):
 
         # Inference
         outputs = model(samples)
-        detection_output = outputs[0][1]
         dehazing_output = outputs[1]
-
-        # NMS
-        detection_output = util.non_max_suppression(detection_output, 0.001, 0.65)
 
         for i in range(samples.shape[0]):
             # Restore image
@@ -747,32 +804,8 @@ def inference_test_set(model_path, args, params, test_set='test', device="cpu"):
             restored_img = (restored_img * 255).astype(numpy.uint8)
             restored_img = cv2.cvtColor(restored_img, cv2.COLOR_RGB2BGR)
 
-            # Draw bounding boxes and labels
-            detections = detection_output[i]
-            if detections is not None and len(detections):
-                for det in detections:
-                    if det[4].cpu().numpy() > 0.65:
-                        bbox = det[:4].cpu().numpy()
-                        conf = det[4].cpu().numpy()
-                        cls = int(det[5].cpu().numpy())
-
-                        x1, y1, x2, y2 = bbox.astype(int)
-                        
-                        # Get class name
-                        class_name = params['names'][cls]
-                        color = CLASS_COLORS.get(class_name, (0, 255, 0))  
-
-                        # Draw bounding box
-                        cv2.rectangle(restored_img, (x1, y1), (x2, y2), color, 2)
-                        
-                        # Put class name and confidence
-                        label = f'{class_name} {conf:.2f}'
-                        (label_width, label_height), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-                        cv2.rectangle(restored_img, (x1, y1 - label_height - 10), (x1 + label_width, y1), color, -1)
-                        cv2.putText(restored_img, label, (x1, y1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1)
-
             # Save output image
-            output_filename = f'{output_dir}/dehazed_detected_{batch_idx}_{i}.jpg'
+            output_filename = f'{output_dir}/dehazed_{batch_idx}_{i}.jpg'
             cv2.imwrite(output_filename, restored_img)
 
     print(f"Processed images saved to {output_dir}")
@@ -794,8 +827,8 @@ def main():
     parser.add_argument('--inference_input',type=str)
     parser.add_argument('--inference_test', action='store_true')
     parser.add_argument('--data', default='rtts',type=str)
-    parser.add_argument('--detection_weight', default=0.6, type=int)
-    parser.add_argument('--dehazing_weight', default=0.4, type=int)
+    parser.add_argument('--detection_weight', default=0.8, type=int)
+    parser.add_argument('--dehazing_weight', default=0.2, type=int)
     parser.add_argument('--resume', action='store_true')
 
     args = parser.parse_args()
@@ -835,7 +868,7 @@ def main():
     #'./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt'
     #'./test/VOCtest-FOG/2012_004312.jpg'
     if args.inference_test:
-        inference_test_set(args.model_path, args, params, test_set=args.data, device=device)
+        inference_test_set('./weights/best_640_0.0001_0.01_0.1_0.9_3dec_aug_msb(76).pt', args, params, test_set=args.data, device=device)
 
 if __name__ == "__main__":
     main()
