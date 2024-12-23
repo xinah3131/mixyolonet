@@ -27,7 +27,7 @@ cd MixYoloNet
 ## Pretrained Model
 | Model Name             | Download Link                                  |
 |------------------------|-------------------------------------------------|
-| Mix-YOLONet | [Link](https://example.com/model_download)      |
+| Mix-YOLONet | [Link](https://drive.google.com/file/d/1URQIXPIMJMSvucez9HjEglrWu33PrIs5/view?usp=sharing)      |
 
 
 ## Usage
